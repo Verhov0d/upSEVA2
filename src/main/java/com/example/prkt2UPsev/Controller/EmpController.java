@@ -42,4 +42,46 @@ public class EmpController {
         model.addAttribute("listPeople", employee);
         return "employee/index";
     }
+    @GetMapping("/details/{id}")
+    public String employeeDetails(Model model,
+                                  @PathVariable long id) {
+        Employee employee = empRepository.findById(id).orElseThrow();
+        model.addAttribute("people", employee);
+        return ("/employee/details");
+    }
+
+    @GetMapping("/edit/{id}")
+    public String employeeEdit(Model model,
+                               @PathVariable long id) {
+
+        Employee employee = empRepository.findById(id).orElseThrow();
+        model.addAttribute("editPeople", employee);
+        return("/employee/edit");
+    }
+
+    @PostMapping("/edit/{id}")
+    public String employeeEdit(@PathVariable long id,
+                               @RequestParam String name,
+                               @RequestParam Integer age,
+                               @RequestParam String post,
+                               @RequestParam String animal,
+                               @RequestParam String timetable) {
+
+        Employee employee = empRepository.findById(id).orElseThrow();
+        employee.setName(name);
+        employee.setAge(age);
+        employee.setPost(post);
+        employee.setAnimal(animal);
+        employee.setTimetable(timetable);
+
+        empRepository.save(employee);
+
+        return("redirect:/employee/details/" + employee.getId());
+    }
+
+    @GetMapping("/delete/{id}")
+    public String employeeDelete(@PathVariable long id) {
+        empRepository.deleteById(id);
+        return("redirect:/employee");
+    }
 }

@@ -3,16 +3,28 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.*;
 
 @Entity
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    @NotBlank(message = "Поле не может быть пустым")
+    @Size(min = 1, max = 50, message = "Поле должно содержать от 1 до 50 символов")
     private String name;
+    @NotNull(message = "Поле не может быть пустым")
+    @Max(value = 150, message ="Возраст не может быть больше 150 лет" )
+    @Min(value = 14, message ="Возраст сотрудника не может быть меньше 14 лет" )
     private Integer age;
+    @NotBlank(message = "Поле не может быть пустым")
+    @Size (min = 1, max = 50, message = "Поле должно содержать от 1 до 50 символов")
     private String post;
+    @NotBlank(message = "Поле не может быть пустым")
+    @Size (min = 1, max = 50, message = "Поле должно содержать от 1 до 50 символов")
     private String animal;
+    @NotBlank(message = "Поле не может быть пустым")
+    @Size (min = 1, max = 50, message = "Поле должно содержать от 1 до 50 символов")
     private String timetable;
 
     public Employee(String name, Integer age,

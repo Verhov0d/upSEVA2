@@ -7,17 +7,21 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.DataBinder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.validation.Valid;
 import java.util.List;
 
 
 @Controller
 @RequestMapping("/employee")
+@PreAuthorize("hasAnyAuthority('USER','ADMIN')")
 public class EmpController {
     @Autowired
     EmpRepository empRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @GetMapping("")
     public String employeeMain(Model model){
         Iterable<Employee> listEmployee = empRepository.findAll();
@@ -36,6 +40,7 @@ public class EmpController {
     public String employeeAdd(@Valid Employee employee, BindingResult result){
         if(result.hasErrors()) return "employee/add";
         employee.setActive(true);
+        employee.setPassword(passwordEncoder.encode(employee.getPassword()));
         empRepository.save(employee);
         return "redirect:/employee";
     }
@@ -53,10 +58,9 @@ public class EmpController {
     @PostMapping("/edit/{id}")
     public String employeeEdit(@Valid Employee employee, BindingResult result) {
         if(result.hasErrors()) return "/employee/edit";
-
         employee.setActive(true);
+        employee.setPassword(passwordEncoder.encode(employee.getPassword()));
         empRepository.save(employee);
-
         return("redirect:/employee/details/" + employee.getId());
     }
 

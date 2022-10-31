@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.validation.Valid;
 import java.util.Collections;
@@ -16,6 +17,8 @@ import java.util.Collections;
 public class RegistrationController {
     @Autowired
     private EmpRepository employeeRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @GetMapping("/registration")
     public String reg(Employee employee) {
@@ -34,6 +37,7 @@ public class RegistrationController {
         }
         employee.setActive(true);
         employee.setRoles(Collections.singleton(Role.USER));
+        employee.setPassword(passwordEncoder.encode(employee.getPassword()));
         employeeRepository.save(employee);
         return ("redirect:/login");
     }

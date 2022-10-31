@@ -1,5 +1,6 @@
 package com.example.prkt2UPsev.Controller;
 import com.example.prkt2UPsev.Model.Employee;
+import com.example.prkt2UPsev.Model.Role;
 import com.example.prkt2UPsev.Repository.EmpRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,13 +26,16 @@ public class EmpController {
     }
 
     @GetMapping("/add")
-    public String employeeAddView(Employee employee){
-        return "employee/add";
+    public String employeeAddView(Employee employee, Model model){
+        Iterable<Role> roles = List.of(Role.values());
+        model.addAttribute("roleName", roles);
+        return "/employee/add";
     }
 
     @PostMapping("/add")
     public String employeeAdd(@Valid Employee employee, BindingResult result){
         if(result.hasErrors()) return "employee/add";
+        employee.setActive(true);
         empRepository.save(employee);
         return "redirect:/employee";
     }
@@ -41,6 +45,8 @@ public class EmpController {
 
         Employee employee = empRepository.findById(id).orElseThrow();
         model.addAttribute("employee", employee);
+        Iterable<Role> roles = List.of(Role.values());
+        model.addAttribute("roleName", roles);
         return("/employee/edit");
     }
 
@@ -48,12 +54,13 @@ public class EmpController {
     public String employeeEdit(@Valid Employee employee, BindingResult result) {
         if(result.hasErrors()) return "/employee/edit";
 
+        employee.setActive(true);
         empRepository.save(employee);
 
         return("redirect:/employee/details/" + employee.getId());
     }
 
-    @GetMapping("/employee/filter")
+    @GetMapping("/filter")
     public String employeeFilter(@RequestParam String searchName,
                                  Model model){
         List<Employee> employee = empRepository.findByNameContaining(searchName);
@@ -70,7 +77,9 @@ public class EmpController {
 
     @GetMapping("/delete/{id}")
     public String employeeDelete(@PathVariable long id) {
-        empRepository.deleteById(id);
+        Employee employee = empRepository.findById(id).orElseThrow();
+        employee.setActive(false);
+        empRepository.save(employee);
         return("redirect:/employee");
     }
 }

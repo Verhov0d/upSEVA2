@@ -29,8 +29,9 @@ public class ZooController {
     }
 
     @PostMapping("/add")
-    public String zooAdd(@Valid Zoo zoo, BindingResult result) {
-        if(result.hasErrors()) return "/zoo/add";
+    public String zooAdd(@Valid Zoo zoo, BindingResult result){
+        if(result.hasErrors())
+            return "zoo/add";
         zooRepository.save(zoo);
         return "redirect:/zoo";
     }

@@ -5,4 +5,5 @@ import java.util.List;
 
 public interface EmpRepository extends CrudRepository<Employee, Long> {
     public List<Employee> findByNameContaining(String name);
+    Employee findByUsername(String username);
 }
